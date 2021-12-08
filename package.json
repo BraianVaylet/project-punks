@@ -5,6 +5,9 @@
   "repository": "https://github.com/BraianVaylet/project-punks.git",
   "author": "Braian Vaylet <braianvaylet@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "compile": "npx hardhat compile"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
