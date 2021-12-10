@@ -1,12 +1,11 @@
 {
-  "name": "project-punks",
+  "name": "my-punks",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/BraianVaylet/project-punks.git",
-  "author": "Braian Vaylet <braianvaylet@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
@@ -14,10 +13,10 @@
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.2",
-    "hardhat": "^2.7.0"
+    "ethers": "^5.4.7",
+    "hardhat": "^2.6.4"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.4.0"
+    "@openzeppelin/contracts": "^4.3.2"
   }
 }

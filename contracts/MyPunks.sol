@@ -1,34 +1,35 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Base64.sol";
-import "./PunksDNA.sol";
+import "./MyPunksDNA.sol";
 
-contract ProjectPunks is ERC721, ERC721Enumerable, PunksDNA {
+contract MyPunks is ERC721, ERC721Enumerable, MyPunksDNA {
     using Counters for Counters.Counter;
+    using Strings for uint256;
 
-    // vars
+    // _VARS_
     Counters.Counter private _idCounter; // Contador utilizando libreria de openzeppelin.
     uint256 public maxSupply; // Para limitar el numero de nfts que puedo crear.
     mapping(uint256 => uint256) public tokenDNA;
 
-    // constructor
-    constructor(uint256 _maxSupply) ERC721("ProjectPunks", "PPKS") {
-        // mi maxSupply va a tener el valor del que se ejecute desde el constructor.
-        maxSupply = _maxSupply;
+    constructor(uint256 _maxSupply) ERC721("MyPunks", "PLPKS") {
+        maxSupply = _maxSupply; // mi maxSupply va a tener el valor del que se ejecute desde el constructor.
     }
 
-    // functions
+    // _FUNCTIONS_
     // Funcion para mintear los tokens (ERC721)
     function mint() public {
         uint256 current = _idCounter.current();
-        require(current < maxSupply, "Sorry, no Punks left :("); // Agrego validacion para que no se supere el max de nfts.
+        require(current < maxSupply, "No MyPunks left :("); // Agrego validacion para que no se supere el max de nfts.
+
         tokenDNA[current] = deterministicPseudoRandomDNA(current, msg.sender); // generamos un numero seudo-aleatorio que depende del ruido entre la combinacion del tokenid y la direccion.
-        _safeMint((msg.sender), current); // Genera el token y se lo asigna a la direccion (funcion del ERC721).
-        _idCounter.increment(); // Incremento el current.
+        _safeMint(msg.sender, current); // Genera el token y se lo asigna a la direccion (funcion del ERC721).
+        _idCounter.increment(); // Incremento el current
     }
 
     // Funcion retorna lugar o dominio del NFT (ERC721)
@@ -39,12 +40,13 @@ contract ProjectPunks is ERC721, ERC721Enumerable, PunksDNA {
     // Funcion para contruir los parametros extra a la url.
     function _paramsURI(uint256 _dna) internal view returns (string memory) {
         string memory params;
-        // creamos un bloque para no excedernos en memoria (el compilador hace reseva de memoria en cada bloque)
+
         {
+            // creamos un bloque para no excedernos en memoria (el compilador hace reseva de memoria en cada bloque)
             params = string(
                 abi.encodePacked(
                     "accessoriesType=",
-                    getAccesoriesType(_dna),
+                    getAccessoriesType(_dna),
                     "&clotheColor=",
                     getClotheColor(_dna),
                     "&clotheType=",
@@ -78,6 +80,7 @@ contract ProjectPunks is ERC721, ERC721Enumerable, PunksDNA {
     function imageByDNA(uint256 _dna) public view returns (string memory) {
         string memory baseURI = _baseURI();
         string memory paramsURI = _paramsURI(_dna);
+
         return string(abi.encodePacked(baseURI, "?", paramsURI));
     }
 
@@ -92,25 +95,22 @@ contract ProjectPunks is ERC721, ERC721Enumerable, PunksDNA {
     {
         require(
             _exists(tokenId), // funcion del ERC721
-            "ERC721 Metadata: URI query for nonexistent token."
+            "ERC721 Metadata: URI query for nonexistent token"
         );
+
         uint256 dna = tokenDNA[tokenId];
         string memory image = imageByDNA(dna);
+
         string memory jsonURI = Base64.encode(
             abi.encodePacked(
-                "{",
-                '"name": "ProjectPunks #"',
-                tokenId,
-                '"',
-                ",",
-                '"description": "Project Punks NFTs generator"',
-                ",",
-                '"image":',
+                '{ "name": "MyPunks #',
+                tokenId.toString(),
+                '", "description": "Platzi Punks are randomized Avataaars stored on chain to teach DApp development on Platzi", "image": "',
                 image,
-                ","
-                '"}"'
+                '"}'
             ) // abi.encodePacked() es una funcionalidad de solidity para concatenar strings.
         );
+
         return
             string(abi.encodePacked("data:application/json;base64,", jsonURI));
     }
@@ -124,7 +124,6 @@ contract ProjectPunks is ERC721, ERC721Enumerable, PunksDNA {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    // This function is overrides required by Solidity.
     function supportsInterface(bytes4 interfaceId)
         public
         view

@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-contract PunksDNA {
+contract MyPunksDNA {
     // Atributos tomados desde https://getavataaars.com/
     string[] private _accessoriesType = [
         "Blank",
@@ -205,6 +205,7 @@ contract PunksDNA {
     // Calculate DNA
     // Esta funcion es determinista y no debe ser usada en produccion.
     // Para produccion combiene usar oraculos como ChainLink.
+    // This pseudo random function is determistic and should not be used on production
     function deterministicPseudoRandomDNA(uint256 _tokenId, address _minter)
         public
         pure
@@ -212,12 +213,13 @@ contract PunksDNA {
     {
         uint256 combinedParams = _tokenId + uint160(_minter);
         bytes memory encodedParams = abi.encodePacked(combinedParams);
-        bytes32 hashedParams = keccak256(encodedParams); // keccak256 es una funcion de hashing propia de solidity.
+        bytes32 hashedParams = keccak256(encodedParams);
+
         return uint256(hashedParams);
     }
 
     // Get attributes
-    uint8 constant ADN_SECTION_SIZE = 2; // Tamaño del ADN de cada seccion.
+    uint8 constant ADN_SECTION_SIZE = 2;
 
     // Obtenemos la seccion de ADN.
     // Obtenemos el dna y la parte que se descarta a la derecha.
@@ -234,7 +236,7 @@ contract PunksDNA {
             );
     }
 
-    function getAccesoriesType(uint256 _dna)
+    function getAccessoriesType(uint256 _dna)
         public
         view
         returns (string memory)
